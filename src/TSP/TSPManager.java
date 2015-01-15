@@ -31,8 +31,6 @@ public class TSPManager {
 		for(Point p : allPoints) {
 			//System.out.println(p.getX() + " " + p.getY());
 		}
-		nearestNeighborRoute();
-		System.out.println("The route is " + route.toString() + " and its distance is " + routeDistance(route));
 	}
 	//returns distance between two points
 	private double pointDistance(Point a, Point b) {
@@ -85,9 +83,79 @@ public class TSPManager {
 		return dist;
 	}
 	
+	private void calculateNearestNeighborRoute() {
+		nearestNeighborRoute();
+		System.out.println("The route is " + route.toString() + " and its distance is " + routeDistance(route));
+	}
+	
+	private void calculateExhaustiveRoute() {
+		ArrayList<ArrayList<Point>> possibilities = generatePermutations();
+		route = optimalRoute(possibilities);
+		System.out.println("The route is " + route.toString() + " and its distance is " + routeDistance(route));
+	}
+	
+	private ArrayList<ArrayList<Point>> generatePermutations() {
+		ArrayList<int[]> ret = new ArrayList<int[]>();
+		int[] nums = new int[numPoints + 1];
+		for(int i = 0; i < numPoints; i++) {
+			nums[i] = i;
+		}
+		nums[numPoints-1] = 0;
+		permutation(nums, 0, ret);
+/*		for(int[] a : ret){
+			for(int i = 0; i < a.length; i ++) System.out.println(a[i]);
+			System.out.println();
+		}*/
+		
+		ArrayList<ArrayList<Point>> perms = new ArrayList<ArrayList<Point>>();
+		for(int[] place : ret) {
+			ArrayList<Point> temp = new ArrayList<Point>();
+			for(int i = 0; i < place.length - 1; i++) {
+				temp.add(allPoints.get(i));
+			}
+			perms.add(temp);
+		}
+		return perms;
+	}
+	
+	// Algorithm by johk95 
+	// https://stackoverflow.com/questions/20906214/permutation-algorithm-for-array-of-integers-in-java
+	
+	private static void permutation(int[] arr, int pos, ArrayList<int[]> list){
+	    if(arr.length - pos == 1)
+	        list.add(arr.clone());
+	    else
+	        for(int i = pos; i < arr.length; i++){
+	            swap(arr, pos, i);
+	            permutation(arr, pos+1, list);
+	            swap(arr, pos, i);
+	        }
+	}
+
+	private static void swap(int[] arr, int pos1, int pos2){
+	    int h = arr[pos1];
+	    arr[pos1] = arr[pos2];
+	    arr[pos2] = h;
+	}
+	
+	// Algorithm by johk95 
+	// https://stackoverflow.com/questions/20906214/permutation-algorithm-for-array-of-integers-in-java
+	
+	private ArrayList<Point> optimalRoute(ArrayList<ArrayList<Point>> inputs) {
+		ArrayList<Point> temp = inputs.get(0);
+		double dist = routeDistance(temp);
+		for(ArrayList<Point> list : inputs) {
+			if(routeDistance(list) < dist) {
+				temp = list;
+				dist = routeDistance(list);
+			}
+		}
+		return temp;
+	}
 	
 	public static void main(String[] args){
 		TSPManager demo = new TSPManager("points.txt");
-		
+		//demo.calculateNearestNeighborRoute();
+		demo.calculateExhaustiveRoute();
 	}
 }
