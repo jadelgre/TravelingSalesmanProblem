@@ -1,14 +1,11 @@
 package TSP;
 
-import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Random;
 
-import static java.lang.System.out;
-// Generates a a set of points
+// Generates a a set n points and writes the output to the given filename
 public class PointGenerator {
 	private String fileName;
 	private int numPoints;
@@ -50,17 +47,5 @@ public class PointGenerator {
 				e.printStackTrace();
 			}
 		}
-		
-		/*out.print(numPoints);
-		for(Point p : points) {
-			out.(p.toString());
-		}
-		out.close();
-		try {
-			write.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} */
 	}
 }

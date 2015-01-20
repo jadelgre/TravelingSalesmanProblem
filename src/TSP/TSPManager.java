@@ -65,9 +65,7 @@ public class TSPManager {
 		Point location = allPoints.get(0);
 		route.add(location);
 		visitedPoints.add(location);
-		int i = 0;
 		while(allPoints.size() > visitedPoints.size()) {
-			i++;
 			location = nearestPoint(location);
 			route.add(location);
 			visitedPoints.add(location);
@@ -86,11 +84,18 @@ public class TSPManager {
 	
 	private void calculateNearestNeighborRoute() {
 		nearestNeighborRoute();
-		System.out.println("The route is " + route.toString() + " and its distance is " + routeDistance(route));
+		System.out.println("The Nearest Neighbor route is " + route.toString() + " and its distance is " + routeDistance(route));
 	}
 	
 	private void calculateExhaustiveRoute() {
-		ArrayList<ArrayList<Point>> possibilities = generatePermutations();
+		//ArrayList<ArrayList<Point>> possibilities = generatePermutations();
+		PermutationIterator<Point> iterate = new PermutationIterator<Point>(allPoints);
+		ArrayList<ArrayList<Point>> possibilities = new ArrayList<ArrayList<Point>>();
+		while(iterate.hasNext()) {
+			ArrayList<Point> temp = (ArrayList<Point>) iterate.next();
+			temp.add(allPoints.get(0)); // return to home
+			possibilities.add(temp);
+		}
 		route = optimalRoute(possibilities);
 		System.out.println("The route is " + route.toString() + " and its distance is " + routeDistance(route));
 	}
@@ -103,10 +108,6 @@ public class TSPManager {
 		}
 		nums[numPoints-1] = 0;
 		permutation(nums, 0, ret);
-/*		for(int[] a : ret){
-			for(int i = 0; i < a.length; i ++) System.out.println(a[i]);
-			System.out.println();
-		}*/
 		
 		ArrayList<ArrayList<Point>> perms = new ArrayList<ArrayList<Point>>();
 		for(int[] place : ret) {
@@ -116,8 +117,15 @@ public class TSPManager {
 			}
 			perms.add(temp);
 		}
+		//System.out.println(perms.size());
+		for(ArrayList<Point> list : perms){
+			list.add(allPoints.get(0));
+			//System.out.println(list);
+		}
 		return perms;
 	}
+	
+	
 	
 	// Algorithm by johk95 
 	// https://stackoverflow.com/questions/20906214/permutation-algorithm-for-array-of-integers-in-java
@@ -146,9 +154,8 @@ public class TSPManager {
 		ArrayList<Point> temp = inputs.get(0);
 		double dist = routeDistance(temp);
 		for(ArrayList<Point> list : inputs) {
-			if(routeDistance(list) < dist) {
+			if(routeDistance(list) <= dist) {
 				temp = list;
-				dist = routeDistance(list);
 			}
 		}
 		return temp;
@@ -156,9 +163,9 @@ public class TSPManager {
 	
 	public static void main(String[] args){
 		//TSPManager demo = new TSPManager("points.txt");
-		PointGenerator generate = new PointGenerator("output.txt", 100);
+		PointGenerator generate = new PointGenerator("output.txt", 4);
 		TSPManager demo = new TSPManager("output.txt");
-		//demo.calculateNearestNeighborRoute();
+		demo.calculateNearestNeighborRoute();
 		demo.calculateExhaustiveRoute();
 		
 	}
