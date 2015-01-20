@@ -3,6 +3,7 @@ package TSP;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Scanner;
 
 public class TSPManager {
@@ -154,8 +155,11 @@ public class TSPManager {
 	}
 	
 	public static void main(String[] args){
-		TSPManager demo = new TSPManager("points.txt");
+		//TSPManager demo = new TSPManager("points.txt");
+		PointGenerator generate = new PointGenerator("output.txt", 100);
+		TSPManager demo = new TSPManager("output.txt");
 		//demo.calculateNearestNeighborRoute();
 		demo.calculateExhaustiveRoute();
+		
 	}
 }

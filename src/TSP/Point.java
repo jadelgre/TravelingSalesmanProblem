@@ -23,6 +23,6 @@ public class Point {
 	}
 	
 	public String toString() {
-		return "The point at (" + x + "," + y +")";
+		return x + " " + y;
 	}
 }
