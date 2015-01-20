@@ -4,7 +4,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Scanner;
+import java.util.Set;
+import java.util.TreeSet;
 
 public class TSPManager {
 	private ArrayList<Point> allPoints;
@@ -28,9 +31,6 @@ public class TSPManager {
 		route = new ArrayList<Point>();
 		while(scan.hasNextLine()) {
 			allPoints.add(new Point( scan.nextInt(), scan.nextInt()));
-		}
-		for(Point p : allPoints) {
-			//System.out.println(p.getX() + " " + p.getY());
 		}
 	}
 	//returns distance between two points
@@ -74,7 +74,6 @@ public class TSPManager {
 	}
 	
 	private double routeDistance(ArrayList<Point> path) {
-		
 		double dist = 0;
 		for(int i = 0; i < path.size() - 1; i++){
 			dist+=pointDistance(path.get(i),path.get(i+1));
@@ -84,7 +83,7 @@ public class TSPManager {
 	
 	private void calculateNearestNeighborRoute() {
 		nearestNeighborRoute();
-		System.out.println("The Nearest Neighbor route is " + route.toString() + " and its distance is " + routeDistance(route));
+		System.out.println("The Nearest Neighbor route is " + route.toString() + "\n and its distance is " + routeDistance(route));
 	}
 	
 	private void calculateExhaustiveRoute() {
@@ -97,58 +96,8 @@ public class TSPManager {
 			possibilities.add(temp);
 		}
 		route = optimalRoute(possibilities);
-		System.out.println("The route is " + route.toString() + " and its distance is " + routeDistance(route));
+		System.out.println("The optimal route is " + route.toString() + "\n and its distance is " + routeDistance(route));
 	}
-	
-	private ArrayList<ArrayList<Point>> generatePermutations() {
-		ArrayList<int[]> ret = new ArrayList<int[]>();
-		int[] nums = new int[numPoints + 1];
-		for(int i = 0; i < numPoints; i++) {
-			nums[i] = i;
-		}
-		nums[numPoints-1] = 0;
-		permutation(nums, 0, ret);
-		
-		ArrayList<ArrayList<Point>> perms = new ArrayList<ArrayList<Point>>();
-		for(int[] place : ret) {
-			ArrayList<Point> temp = new ArrayList<Point>();
-			for(int i = 0; i < place.length - 1; i++) {
-				temp.add(allPoints.get(i));
-			}
-			perms.add(temp);
-		}
-		//System.out.println(perms.size());
-		for(ArrayList<Point> list : perms){
-			list.add(allPoints.get(0));
-			//System.out.println(list);
-		}
-		return perms;
-	}
-	
-	
-	
-	// Algorithm by johk95 
-	// https://stackoverflow.com/questions/20906214/permutation-algorithm-for-array-of-integers-in-java
-	
-	private static void permutation(int[] arr, int pos, ArrayList<int[]> list){
-	    if(arr.length - pos == 1)
-	        list.add(arr.clone());
-	    else
-	        for(int i = pos; i < arr.length; i++){
-	            swap(arr, pos, i);
-	            permutation(arr, pos+1, list);
-	            swap(arr, pos, i);
-	        }
-	}
-
-	private static void swap(int[] arr, int pos1, int pos2){
-	    int h = arr[pos1];
-	    arr[pos1] = arr[pos2];
-	    arr[pos2] = h;
-	}
-	
-	// Algorithm by johk95 
-	// https://stackoverflow.com/questions/20906214/permutation-algorithm-for-array-of-integers-in-java
 	
 	private ArrayList<Point> optimalRoute(ArrayList<ArrayList<Point>> inputs) {
 		ArrayList<Point> temp = inputs.get(0);
@@ -156,6 +105,7 @@ public class TSPManager {
 		for(ArrayList<Point> list : inputs) {
 			if(routeDistance(list) <= dist) {
 				temp = list;
+				dist = routeDistance(list);
 			}
 		}
 		return temp;
@@ -163,10 +113,10 @@ public class TSPManager {
 	
 	public static void main(String[] args){
 		//TSPManager demo = new TSPManager("points.txt");
-		PointGenerator generate = new PointGenerator("output.txt", 4);
+		PointGenerator generate = new PointGenerator("output.txt", 1000);
 		TSPManager demo = new TSPManager("output.txt");
 		demo.calculateNearestNeighborRoute();
-		demo.calculateExhaustiveRoute();
+		//demo.calculateExhaustiveRoute();
 		
 	}
 }

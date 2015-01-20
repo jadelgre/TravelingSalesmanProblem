@@ -1,6 +1,6 @@
 package TSP;
 
-public class Point {
+public class Point implements Comparable {
 	private int x;
 	private int y;
 	
