@@ -153,9 +153,5 @@ public class PermutationIterator<E> implements Iterator<List<E>> {
     public void remove() {
         throw new UnsupportedOperationException("remove() is not supported");
     }
-    // Added by me
-    public List<E> getPermutations() {
-    	return nextPermutation;
-    }
 
 }

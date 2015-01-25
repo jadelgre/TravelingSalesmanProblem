@@ -13,28 +13,15 @@ public class TSPManager {
 	private ArrayList<Point> allPoints;
 	private ArrayList<Point> visitedPoints;
 	private ArrayList<Point> route;
-	private Set<Point> nearestPoints;
 	private int numPoints;
-	private String filename = "points.txt";
-	TSPManager() {
-		readFile();
-	}
-	
-	TSPManager(String input) {
-		filename = input;
-		readFile();
-	}
-	
-	private void setFile(String input) {
-		filename = input;
-		readFile();
-	}
-	
-	private void readFile() {
+	private double furthest;
+
+	TSPManager(String filename) {
 		FileReader read = null;
 		try {
 			read = new FileReader(filename);
 		} catch (Exception e) {
+			// TODO Auto-generated catch block
 			System.out.println(e.toString());
 			System.exit(0);
 		}
@@ -46,29 +33,38 @@ public class TSPManager {
 		while(scan.hasNextLine()) {
 			allPoints.add(new Point( scan.nextInt(), scan.nextInt()));
 		}
-		scan.close();
 	}
 	//returns distance between two points
 	private double pointDistance(Point a, Point b) {
 		double x = Math.pow(a.getX() - b.getX(),2);
 		double y = Math.pow(a.getY() - b.getY(),2);
-		//System.out.println("a: " + a + " b: " + b + " x: " + x + " y: " + "     " + Math.sqrt(x+y));
 		return Math.sqrt(x+y);
 	}
-	
-	private void calculateNearestPoints() {
-		nearestPoints = new HashSet<Point>();
+
+	private double furthestPoint(Point current) {
+		double dist = 0;
 		for(Point p : allPoints) {
-			//nearestPoints.
+			if(!visitedPoints.contains(p) && pointDistance(current, p) > dist) dist = pointDistance(current, p);
 		}
+		return dist;
+	}
+
+	private void calculateFurthestDistance() {
+		double dist = 0;
+		for(Point p : allPoints) {
+			for(Point x : allPoints) {
+				if(pointDistance(x, p) > dist) dist = pointDistance(x, p);
+			}
+		}
+		furthest = dist;
 	}
 
 	// returns nearest unvisited point not including itself
 	private Point nearestPoint(Point current) {
 		Point temp = current;
-		double dist = Double.POSITIVE_INFINITY;
+		double dist = furthest;
 		for(Point p : allPoints) {
-			if(!visitedPoints.contains(p) && pointDistance(temp, p) <= dist && dist > 0) {
+			if(!visitedPoints.contains(p) && pointDistance(temp, p) <= dist && !current.equals(p)) {
 				dist = pointDistance(temp, p);
 				temp = p;
 			}
@@ -91,7 +87,6 @@ public class TSPManager {
 	private double routeDistance(ArrayList<Point> path) {
 		double dist = 0;
 		for(int i = 0; i < path.size() - 1; i++){
-			//System.out.println(dist);
 			dist+=pointDistance(path.get(i),path.get(i+1));
 		}
 		return dist;
@@ -99,10 +94,11 @@ public class TSPManager {
 
 	private void calculateNearestNeighborRoute() {
 		nearestNeighborRoute();
-		//System.out.println("The Nearest Neighbor route is " + route.toString() + "\n and its distance is " + routeDistance(route));
+		System.out.println("The Nearest Neighbor route is " + route.toString() + "\n and its distance is " + routeDistance(route));
 	}
 
 	private void calculateExhaustiveRoute() {
+		//ArrayList<ArrayList<Point>> possibilities = generatePermutations();
 		PermutationIterator<Point> iterate = new PermutationIterator<Point>(allPoints);
 		ArrayList<ArrayList<Point>> possibilities = new ArrayList<ArrayList<Point>>();
 		while(iterate.hasNext()) {
@@ -111,7 +107,7 @@ public class TSPManager {
 			possibilities.add(temp);
 		}
 		route = optimalRoute(possibilities);
-		//System.out.println("The optimal route is " + route.toString() + "\n and its distance is " + routeDistance(route));
+		System.out.println("The optimal route is " + route.toString() + "\n and its distance is " + routeDistance(route));
 	}
 
 	private ArrayList<Point> optimalRoute(ArrayList<ArrayList<Point>> inputs) {
@@ -131,18 +127,18 @@ public class TSPManager {
 		ArrayList<Double> nearestTimes = new ArrayList<Double>();
 		ArrayList<Double> exhaustiveTimes = new ArrayList<Double>();
 		PointGenerator generator;
-		TSPManager temp = new TSPManager();;
+		TSPManager temp;
 		long startTime, endTime;
 		for(int i = 0; i < numTrials; i++) {
-			generator = new PointGenerator("trial.txt", size);
-			temp.setFile("trial.txt");
+			generator = new PointGenerator("output.txt", size);
+			temp = new TSPManager("output.txt");
 
 			startTime = System.nanoTime();
 			temp.calculateNearestNeighborRoute();
 			endTime = System.nanoTime();
 			nearestTimes.add((endTime - startTime) / 1.0E09);
 
-			if(size <= 11) {
+			if(size < 11) {
 				startTime = System.nanoTime();
 				temp.calculateExhaustiveRoute();
 				endTime = System.nanoTime();
@@ -155,31 +151,24 @@ public class TSPManager {
 		int i = 1;
 		for(Double time : nearestTimes) {
 			sum += time;
-			//System.out.println("NN Trial " + i +":   " + time + " seconds");
-			System.out.println(time);
+			System.out.println("NN Trial " + i +":   " + time + " seconds");
 			i++;
 		}
 		System.out.println("Average time = " + sum / numTrials + " seconds");
-		if(size < 11) {
-			sum = 0;
-			i = 1;
-			for(Double time : exhaustiveTimes) {
-				sum += time;
-				//System.out.println("EX Trial " + i +": " + time + " seconds");
-				System.out.println(time);
-				i++;
-				
-			}
-			System.out.println("Average time = " + sum / numTrials + " seconds");
+		sum = 0;
+		i = 1;
+		for(Double time : exhaustiveTimes) {
+			sum += time;
+			System.out.println("EX Trial " + i +":              " + time + " seconds");
+			i++;
 		}
-		
+		System.out.println("Average time = " + sum / numTrials + " seconds");
 	}
 
 	public static void main(String[] args){
-		//PointGenerator generate = new PointGenerator("output.txt", 5 );
+		PointGenerator generate = new PointGenerator("output.txt", 1 );
 		TSPManager demo = new TSPManager("output.txt");
-		//TSPManager demo = new TSPManager();
-		demo.runTrials(5, 11);
+		demo.runTrials(10, 5000);
 		//demo.calculateNearestNeighborRoute();
 		//demo.calculateExhaustiveRoute();
 

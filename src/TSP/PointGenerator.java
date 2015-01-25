@@ -12,15 +12,15 @@ public class PointGenerator {
 	PointGenerator(String fileName, int numPoints) {
 		this.fileName = fileName;
 		this.numPoints = numPoints;
-		generate();
+		if(numPoints > 0) generate();
 	}
 	
 	private void generate() {
 		ArrayList<Point> points = new ArrayList<Point>();
-		Random rand = new Random(7);
+		Random rand = new Random(System.nanoTime());
 		while(points.size() < numPoints) {
-			int x = rand.nextInt(1000);
-			int y = rand.nextInt(1000);
+			int x = rand.nextInt();
+			int y = rand.nextInt();
 			points.add(new Point(x,y));
 		}
 		writeToFile(points);

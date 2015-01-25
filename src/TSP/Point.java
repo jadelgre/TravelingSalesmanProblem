@@ -1,8 +1,9 @@
 package TSP;
 
-public class Point implements Comparable {
+public class Point {
 	private int x;
 	private int y;
+	private Boolean visited = false;
 	
 	Point( int a, int b) {
 		x = a;
@@ -15,6 +16,14 @@ public class Point implements Comparable {
 	
 	public int getY() {
 		return y;
+	}
+	
+	public void visited() {
+		visited = true;
+	}
+	
+	public Boolean beenVisited() {
+		return visited;
 	}
 	
 	public Boolean equals(Point other) {
