@@ -104,8 +104,6 @@ public class TSPManager {
 		//System.out.println(possibilities.size());
 		for(ArrayList<Point> list : possibilities) {
 			list.add(list.get(0)); // wrap around
-			//System.out.println(list);
-
 		}
 		//System.out.println("The optimal route is " + route.toString() + "\n and its distance is " + routeDistance(route));
 	}
@@ -139,7 +137,7 @@ public class TSPManager {
 			endTime = System.nanoTime();
 			nearestTimes.add((endTime - startTime) / 1.0E09);
 
-			if(size <= 10) {
+			if(size <= 11) {
 				startTime = System.nanoTime();
 				temp.calculateExhaustiveRoute();
 				endTime = System.nanoTime();
@@ -157,7 +155,7 @@ public class TSPManager {
 			i++;
 		}
 		System.out.println("Average time = " + sum / numTrials + " seconds");
-		if(size < 11) {
+		if(size <= 11) {
 			sum = 0;
 			i = 1;
 			for(Double time : exhaustiveTimes) {
@@ -201,7 +199,7 @@ public class TSPManager {
 		//PointGenerator generate = new PointGenerator("output.txt", 5 );
 		//TSPManager demo = new TSPManager("output.txt");
 		TSPManager demo = new TSPManager();
-		demo.runTrials(6, 7);
+		demo.runTrials(1, 8);
 		//demo.calculateNearestNeighborRoute();
 		//demo.calculateExhaustiveRoute();
 
