@@ -9,7 +9,8 @@ import java.util.Random;
 public class PointGenerator {
 	private String fileName;
 	private int numPoints;
-	PointGenerator(String fileName, int numPoints) {
+	
+	public PointGenerator(String fileName, int numPoints) {
 		this.fileName = fileName;
 		this.numPoints = numPoints;
 		if(numPoints > 0) generate();

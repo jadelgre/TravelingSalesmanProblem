@@ -14,13 +14,22 @@ public class TSPManager {
 	private ArrayList<Point> route;
 	private int numPoints;
 	private int visitedNum = 1;
-	private String filename = "points2.txt";
-	TSPManager() {
-		readFile();
-	}
+	private String filename = "10.txt";
 
-	TSPManager(String input) {
-		filename = input;
+	TSPManager() {
+/*		Scanner scan = new Scanner(System.in);
+		System.out.println("Do you want to load points from a file");
+		String response = scan.next();
+		if(response.contains("y") || response.contains("Y")) {
+			System.out.println("Enter the filename:");
+			filename = scan.next();
+		} else {
+			System.out.println("Enter the number of points to be randomly generated");
+			numPoints = Integer.parseInt(scan.next());
+			PointGenerator generate = new PointGenerator(filename, numPoints);
+		}
+		this.calculateNearestNeighborRoute();
+		this.calculateExhaustiveRoute();*/
 		readFile();
 	}
 
@@ -50,7 +59,6 @@ public class TSPManager {
 	private double pointDistance(Point a, Point b) {
 		double x = Math.pow(a.getX() - b.getX(),2);
 		double y = Math.pow(a.getY() - b.getY(),2);
-		//System.out.println("a: " + a + " b: " + b + " x: " + x + " y: " + "     " + Math.sqrt(x+y));
 		return Math.sqrt(x+y);
 	}
 
@@ -94,7 +102,7 @@ public class TSPManager {
 
 	public void calculateNearestNeighborRoute() {
 		nearestNeighborRoute();
-		//System.out.println("The Nearest Neighbor route is " + route.toString() + "\n and its distance is " + routeDistance(route));
+		System.out.println("The Nearest Neighbor route is " + route.toString() + "\n and its distance is " + routeDistance(route));
 	}
 
 	public void calculateExhaustiveRoute() {
@@ -105,7 +113,7 @@ public class TSPManager {
 		for(ArrayList<Point> list : possibilities) {
 			list.add(list.get(0)); // wrap around
 		}
-		//System.out.println("The optimal route is " + route.toString() + "\n and its distance is " + routeDistance(route));
+		System.out.println("The optimal route is " + route.toString() + "\n and its distance is " + routeDistance(route));
 	}
 
 
@@ -119,55 +127,6 @@ public class TSPManager {
 			}
 		}
 		return temp;
-	}
-
-	private void runTrials(int numTrials, int size) {
-		System.out.println("Running " + numTrials + " trials. Size: " + size + " points");
-		ArrayList<Double> nearestTimes = new ArrayList<Double>();
-		ArrayList<Double> exhaustiveTimes = new ArrayList<Double>();
-		PointGenerator generator;
-		TSPManager temp = new TSPManager();;
-		long startTime, endTime;
-		for(int i = 0; i < numTrials; i++) {
-			generator = new PointGenerator("trial.txt", size);
-			temp = new TSPManager("trial.txt");
-
-			startTime = System.nanoTime();
-			temp.calculateNearestNeighborRoute();
-			endTime = System.nanoTime();
-			nearestTimes.add((endTime - startTime) / 1.0E09);
-
-			if(size <= 11) {
-				startTime = System.nanoTime();
-				temp.calculateExhaustiveRoute();
-				endTime = System.nanoTime();
-				exhaustiveTimes.add((endTime - startTime) / 1.0E09);
-			}
-		}
-
-		System.out.println("The results:");
-		double sum = 0;
-		int i = 1;
-		for(Double time : nearestTimes) {
-			sum += time;
-			//System.out.println("NN Trial " + i +":   " + time + " seconds");
-			System.out.println(time);
-			i++;
-		}
-		System.out.println("Average time = " + sum / numTrials + " seconds");
-		if(size <= 11) {
-			sum = 0;
-			i = 1;
-			for(Double time : exhaustiveTimes) {
-				sum += time;
-				//System.out.println("EX Trial " + i +": " + time + " seconds");
-				System.out.println(time);
-				i++;
-
-			}
-			System.out.println("Average time = " + sum / numTrials + " seconds");
-		}
-
 	}
 	
 	// http://stackoverflow.com/questions/10305153/generating-all-possible-permutations-of-a-list-recursively
@@ -199,9 +158,8 @@ public class TSPManager {
 		//PointGenerator generate = new PointGenerator("output.txt", 5 );
 		//TSPManager demo = new TSPManager("output.txt");
 		TSPManager demo = new TSPManager();
-		demo.runTrials(1, 8);
-		//demo.calculateNearestNeighborRoute();
-		//demo.calculateExhaustiveRoute();
+		demo.calculateNearestNeighborRoute();
+		demo.calculateExhaustiveRoute();
 
 	}
 
