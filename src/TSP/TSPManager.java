@@ -28,9 +28,9 @@ public class TSPManager {
 			numPoints = Integer.parseInt(scan.next());
 			PointGenerator generate = new PointGenerator(filename, numPoints);
 		}
+		readFile();
 		this.calculateNearestNeighborRoute();
 		this.calculateExhaustiveRoute();*/
-		readFile();
 	}
 
 	private void setFile(String input) {
