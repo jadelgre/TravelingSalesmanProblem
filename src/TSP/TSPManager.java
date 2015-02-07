@@ -17,7 +17,7 @@ public class TSPManager {
 	private String filename = "10.txt";
 
 	TSPManager() {
-/*		Scanner scan = new Scanner(System.in);
+		Scanner scan = new Scanner(System.in);
 		System.out.println("Do you want to load points from a file");
 		String response = scan.next();
 		if(response.contains("y") || response.contains("Y")) {
@@ -28,11 +28,17 @@ public class TSPManager {
 			numPoints = Integer.parseInt(scan.next());
 			PointGenerator generate = new PointGenerator(filename, numPoints);
 		}
-		this.calculateNearestNeighborRoute();
-		this.calculateExhaustiveRoute();*/
+		System.out.println("Do you want to time the run");
+		boolean timed = false;
+		response = scan.next();
+		if(response.contains("y") || response.contains("Y")) {
+			timed = true;
+		}
 		readFile();
+		this.calculateNearestNeighborRoute(timed);
+		this.calculateExhaustiveRoute(timed);
 	}
-
+	
 	private void setFile(String input) {
 		filename = input;
 		readFile();
@@ -89,7 +95,7 @@ public class TSPManager {
 			visitedNum++;
 			route.add(location);
 		}
-		route.add(allPoints.get(0)); // return home
+		route.add(allPoints.get(0)); // wrap around
 	}
 
 	private double routeDistance(ArrayList<Point> path) {
@@ -100,30 +106,48 @@ public class TSPManager {
 		return dist;
 	}
 
-	public void calculateNearestNeighborRoute() {
+	public void calculateNearestNeighborRoute(Boolean timed) {
+		double timer = 0;
+		if(timed) {
+			timer = System.nanoTime();
+		}
 		nearestNeighborRoute();
-		System.out.println("The Nearest Neighbor route is " + route.toString() + "\n and its distance is " + routeDistance(route));
+		if(timed) {
+			timer = (System.nanoTime() - timer) / 1000000;
+			System.out.println("The Nearest Neighbor route is " + route.toString() + "\n and its distance is " + routeDistance(route) + ". It took " + timer + " milliseconds.");
+		} else {
+			System.out.println("The Nearest Neighbor route is " + route.toString() + "\n and its distance is " + routeDistance(route));
+		}
 	}
 
-	public void calculateExhaustiveRoute() {
-		PermutationIterator<Point> iterate = new PermutationIterator<Point>(allPoints);
+	public void calculateExhaustiveRoute(Boolean timed) {
+		double timer = 0;
+		if(timed) {
+			timer = System.nanoTime();
+		}
 		ArrayList<ArrayList<Point>> possibilities = new ArrayList<ArrayList<Point>>();
 		possibilities.addAll((Collection<? extends ArrayList<Point>>) generatePerm( allPoints ));
-		//System.out.println(possibilities.size());
 		for(ArrayList<Point> list : possibilities) {
 			list.add(list.get(0)); // wrap around
 		}
-		System.out.println("The optimal route is " + route.toString() + "\n and its distance is " + routeDistance(route));
+		route = optimalRoute(possibilities);
+		if(timed) {
+			timer = (System.nanoTime() - timer) / 1000000;
+			System.out.println("The optimal route is " + route.toString() + "\n and its distance is " + routeDistance(route) + ". It took " + timer + " milliseconds.");
+		} else {
+			System.out.println("The optimal route is " + route.toString() + "\n and its distance is " + routeDistance(route));
+		}
 	}
 
 
 	private ArrayList<Point> optimalRoute(ArrayList<ArrayList<Point>> inputs) {
-		ArrayList<Point> temp = inputs.get(0);
-		double dist = routeDistance(temp);
+		double dist = Double.POSITIVE_INFINITY;
+		ArrayList<Point> temp = null;
 		for(ArrayList<Point> list : inputs) {
-			if(routeDistance(list) <= dist) {
+			double newDist = routeDistance(list); // calculate the distance of each route
+			if(newDist <= dist) {
 				temp = list;
-				dist = routeDistance(list);
+				dist = newDist;
 			}
 		}
 		return temp;
@@ -132,14 +156,14 @@ public class TSPManager {
 	// http://stackoverflow.com/questions/10305153/generating-all-possible-permutations-of-a-list-recursively
 
 	public List<List<Point>> generatePerm(List<Point> original) {
-		if (original.size() == 0) { 
-			List<List<Point>> result = new ArrayList<List<Point>>();
-			result.add(new ArrayList<Point>());
-			return result;
+		if (original.size() == 0) { // if there's no more items
+			List<List<Point>> result = new ArrayList<List<Point>>(); // create a new list of lists
+			result.add(new ArrayList<Point>()); // add a new list to that list
+			return result; // return the list
 		}
-		Point firstElement = original.remove(0);
+		Point firstElement = original.remove(0); // remove the first element
 		List<List<Point>> returnValue = new ArrayList<List<Point>>();
-		List<List<Point>> permutations = generatePerm(original);
+		List<List<Point>> permutations = generatePerm(original); // call generatePerm on the list minus the first element
 		for (List<Point> smallerPermutated : permutations) {
 			for (int index=0; index <= smallerPermutated.size(); index++) {
 				List<Point> temp = new ArrayList<Point>(smallerPermutated);
@@ -155,11 +179,11 @@ public class TSPManager {
 	}
 
 	public static void main(String[] args){
-		//PointGenerator generate = new PointGenerator("output.txt", 5 );
+		//PointGenerator generate = new PointGenerator("10.txt", 10 );
 		//TSPManager demo = new TSPManager("output.txt");
 		TSPManager demo = new TSPManager();
-		demo.calculateNearestNeighborRoute();
-		demo.calculateExhaustiveRoute();
+		//demo.calculateNearestNeighborRoute();
+		//demo.calculateExhaustiveRoute();
 
 	}
 
