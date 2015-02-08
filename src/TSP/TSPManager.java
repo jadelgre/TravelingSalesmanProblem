@@ -113,29 +113,31 @@ public class TSPManager {
 		}
 		nearestNeighborRoute();
 		if(timed) {
-			timer = (System.nanoTime() - timer) / 1000000;
-			System.out.println("The Nearest Neighbor route is " + route.toString() + "\n and its distance is " + routeDistance(route) + ". It took " + timer + " milliseconds.");
+			timer = (System.nanoTime() - timer) /  1000000000.0;
+			System.out.println("The Nearest Neighbor route is " + route.toString() + "\n and its distance is " + routeDistance(route) + ". It took " + timer + " seconds.");
 		} else {
 			System.out.println("The Nearest Neighbor route is " + route.toString() + "\n and its distance is " + routeDistance(route));
 		}
 	}
 
 	public void calculateExhaustiveRoute(Boolean timed) {
-		double timer = 0;
-		if(timed) {
-			timer = System.nanoTime();
-		}
-		ArrayList<ArrayList<Point>> possibilities = new ArrayList<ArrayList<Point>>();
-		possibilities.addAll((Collection<? extends ArrayList<Point>>) generatePerm( allPoints ));
-		for(ArrayList<Point> list : possibilities) {
-			list.add(list.get(0)); // wrap around
-		}
-		route = optimalRoute(possibilities);
-		if(timed) {
-			timer = (System.nanoTime() - timer) / 1000000;
-			System.out.println("The optimal route is " + route.toString() + "\n and its distance is " + routeDistance(route) + ". It took " + timer + " milliseconds.");
-		} else {
-			System.out.println("The optimal route is " + route.toString() + "\n and its distance is " + routeDistance(route));
+		if(numPoints < 11) {
+			double timer = 0;
+			if(timed) {
+				timer = System.nanoTime();
+			}
+			ArrayList<ArrayList<Point>> possibilities = new ArrayList<ArrayList<Point>>();
+			possibilities.addAll((Collection<? extends ArrayList<Point>>) generatePerm( allPoints ));
+			for(ArrayList<Point> list : possibilities) {
+				list.add(list.get(0)); // wrap around
+			}
+			route = optimalRoute(possibilities);
+			if(timed) {
+				timer = (System.nanoTime() - timer) /  1000000000.0;
+				System.out.println("The optimal route is " + route.toString() + "\n and its distance is " + routeDistance(route) + ". It took " + timer + " seconds.");
+			} else {
+				System.out.println("The optimal route is " + route.toString() + "\n and its distance is " + routeDistance(route));
+			}
 		}
 	}
 
