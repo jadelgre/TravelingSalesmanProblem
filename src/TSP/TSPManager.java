@@ -57,6 +57,7 @@ public class TSPManager {
 		allPoints = new ArrayList<Point>();
 		route = new ArrayList<Point>();
 		while(scan.hasNextLine()) {
+			
 			allPoints.add(new Point( scan.nextInt(), scan.nextInt()));
 		}
 		scan.close();
