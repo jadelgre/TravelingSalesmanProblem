@@ -56,8 +56,7 @@ public class TSPManager {
 		numPoints = scan.nextInt();
 		allPoints = new ArrayList<Point>();
 		route = new ArrayList<Point>();
-		while(scan.hasNextLine()) {
-			
+		while(scan.hasNextLine()) {			
 			allPoints.add(new Point( scan.nextInt(), scan.nextInt()));
 		}
 		scan.close();
@@ -74,9 +73,9 @@ public class TSPManager {
 		Point temp = current;
 		double dist = Double.POSITIVE_INFINITY;
 		for(Point p : allPoints) {
-			if(!p.beenVisited()) {
-				double calc = pointDistance(temp, p);
-				if(calc <= dist && calc > 0.0) {
+			if(!p.beenVisited() && p != current) {
+				double calc = pointDistance(current, p);
+				if(calc < dist) {
 					dist = calc;
 					temp = p;
 				}
@@ -87,9 +86,9 @@ public class TSPManager {
 
 	private void nearestNeighborRoute() {
 		Point location = allPoints.get(0);
+		location.visited();
 		route.add(location);
 		int numPoints = allPoints.size();
-		location.visited();
 		while(numPoints > visitedNum) {
 			location = nearestPoint(location);
 			location.visited();
